@@ -20,7 +20,7 @@ The application follows a full-stack architecture with clear separation between 
 - **Runtime**: Node.js with Express.js server
 - **Language**: TypeScript with ES modules
 - **Database**: PostgreSQL with Drizzle ORM
-- **Database Provider**: Neon serverless PostgreSQL
+- **Database Provider**: Local Replit PostgreSQL (simplified from Supabase)
 - **API Design**: RESTful endpoints with JSON responses
 
 ### Project Structure
@@ -98,7 +98,8 @@ The application uses three main entities:
 
 ## Changelog
 
-- June 29, 2025. Initial setup
+- June 29, 2025: Initial setup
+- June 29, 2025: Replaced Supabase with local PostgreSQL database for simplified setup and reliable connection
 
 ## User Preferences
 

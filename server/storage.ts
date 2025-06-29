@@ -37,20 +37,18 @@ async function initializeDatabase() {
   if (dbInitialized) return db;
   
   try {
-    // Check if DATABASE_URL is already set (from server/index.ts)
+    // Use the local PostgreSQL database provided by Replit
     if (process.env.DATABASE_URL) {
       console.log("Using DATABASE_URL for connection...");
       const connectionString = process.env.DATABASE_URL;
       
-      // Configure postgres client for Supabase with session mode settings
+      // Configure postgres client for local PostgreSQL
       const client = postgres(connectionString, {
-        ssl: 'require',
-        max: 1, // Single connection for session pooler
-        idle_timeout: 0, // No idle timeout for session mode
-        connect_timeout: 60, // Longer timeout for initial connection
+        max: 10, // Connection pool size
+        idle_timeout: 20,
+        connect_timeout: 10,
         onnotice: () => {}, // Suppress notices
-        debug: false,
-        prepare: false // Disable prepared statements for better compatibility
+        debug: false
       });
       
       db = drizzle(client);

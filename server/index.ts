@@ -2,17 +2,8 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
-// Set up DATABASE_URL for Supabase - try session mode connection
-if (process.env.VITE_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
-  const url = new URL(process.env.VITE_SUPABASE_URL);
-  const host = url.hostname;
-  const projectRef = host.split('.')[0];
-  
-  // Try session mode connection (port 5432) instead of transaction mode (port 6543)
-  const constructedUrl = `postgresql://postgres.${projectRef}:${process.env.SUPABASE_SERVICE_ROLE_KEY}@aws-0-us-west-1.pooler.supabase.com:5432/postgres`;
-  process.env.DATABASE_URL = constructedUrl;
-  console.log(`🔧 Trying session mode connection for project: ${projectRef}`);
-}
+// Use the local PostgreSQL database provided by Replit
+console.log("🔧 Using local PostgreSQL database");
 
 const app = express();
 app.use(express.json());
