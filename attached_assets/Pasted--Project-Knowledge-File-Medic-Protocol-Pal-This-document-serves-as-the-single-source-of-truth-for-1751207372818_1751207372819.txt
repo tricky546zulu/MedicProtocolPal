@@ -1,0 +1,109 @@
+# Project Knowledge File: Medic-Protocol-Pal
+
+This document serves as the single source of truth for the Medic-Protocol-Pal project. It contains all essential information for development, maintenance, and onboarding.
+
+---
+
+## 1. Project Overview
+
+* **Project Goal:** To provide a fast and easy-to-use reference tool for medical first responders to access and use established medical protocols.
+* **Problem Statement:** Medical professionals in high-stress situations need immediate access to accurate and up-to-date protocols. Searching through physical manuals or clunky PDFs on a phone is inefficient and can lead to errors.
+* **Solution:** A web application that provides a clean, searchable, and easily navigable interface for medical protocols, such as PALS, ACLS, and local medical control protocols.
+
+---
+
+## 2. User Personas
+
+### Persona 1: Paramedic/EMT
+* **Role:** Field first responder.
+* **Needs:** Quick access to protocols on a mobile device, often with one hand. Speed and clarity are primary requirements.
+* **Goals:** Reduce time-to-treatment, improve accuracy, and have a reliable reference in high-stress environments.
+
+### Persona 2: Medical Director/Clinical Supervisor
+* **Role:** Oversees clinical standards and protocols.
+* **Needs:** An interface to review, update, and approve protocols to ensure they are current and accurate.
+* **Goals:** Maintain a high standard of care across the organization by providing responders with the latest approved procedures.
+
+### Persona 3: Medical Student/Trainee
+* **Role:** Learner/Student.
+* **Needs:** A tool for studying and memorizing protocols.
+* **Goals:** Use the application to learn and prepare for clinical practice. Might appreciate features like quizzes or flashcards.
+
+---
+
+## 3. Features and Functionality
+
+* **Protocol Library:** A comprehensive list of all included protocols (e.g., PALS Cardiac Arrest, Anaphylaxis, Stroke).
+* **Search Functionality:** The ability to search for protocols by name, keyword, or symptom.
+* **Interactive Algorithms:** Interactive decision trees that guide the user through a protocol based on patient symptoms and vital signs.
+* **Drug Dosage Calculator:** A tool to quickly calculate drug dosages based on patient weight and age.
+* **Offline Access:** The ability for the app to function without an active internet connection.
+* **Favorites/Bookmarks:** Allows users to save frequently used protocols for even faster access.
+
+---
+
+## 4. Design and UX/UI
+
+* **Color Palette:** A simple, high-contrast color scheme that is easy to read in various lighting conditions (e.g., bright sunlight, dark ambulance). `[Insert specific color codes or link to style guide]`
+* **Typography:** A clear, legible font. `[Specify font family, e.g., Inter, Roboto]`
+* **User Flow Diagrams:** `[Link to user flow diagrams in Figma, Miro, or other tool]`
+* **Design Assets:** `[Link to all design assets, including logos, icons, and mockups]`
+
+---
+
+## 5. Technical Details
+
+### System Architecture
+* `[Describe the system architecture here. e.g., "React single-page application (SPA) front-end, Node.js/Express back-end, and a PostgreSQL database."]`
+* `[Include an architecture diagram if available]`
+
+### API Documentation
+* `[Link to Postman collection, Swagger/OpenAPI specification, or other API documentation]`
+
+### Database Schema
+* `[Link to a diagram of the database schema]`
+* `[Briefly describe key tables, e.g., 'protocols', 'users', 'drugs']`
+
+### Development Environment Setup
+1.  **Prerequisites:**
+    * Node.js version: `[e.g., v18.x]`
+    * Package Manager: `[e.g., npm or yarn]`
+    * Database: `[e.g., PostgreSQL]`
+2.  **Installation:**
+    ```bash
+    # Clone the repository
+    git clone [https://github.com/tricky546zulu/medic-protocol-pal.git](https://github.com/tricky546zulu/medic-protocol-pal.git)
+    cd medic-protocol-pal
+
+    # Install dependencies
+    npm install
+    ```
+3.  **Configuration:**
+    * Create a `.env` file from the `.env.example` template.
+    * `[List the necessary environment variables and how to obtain them]`
+4.  **Running the Application:**
+    ```bash
+    # Start the development server
+    npm run dev
+    ```
+
+### Deployment Instructions
+* **Staging Environment:** `[Describe the process for deploying to staging]`
+* **Production Environment:** `[Describe the process for deploying to production]`
+
+### Version Control
+* **Branching Strategy:** We use the GitFlow branching model (`main`, `develop`, `feature/*`, `release/*`, `hotfix/*`).
+* **Commit Messages:** Commits should follow the Conventional Commits specification.
+
+---
+
+## 6. Testing
+
+* **Testing Guidelines:**
+    * Unit tests should be co-located with the components they test.
+    * Integration tests cover the interaction between different parts of the application.
+* **Running Tests:**
+    ```bash
+    # Run all tests
+    npm test
+    ```
