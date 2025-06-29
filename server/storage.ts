@@ -1,4 +1,5 @@
-import { drizzle } from "drizzle-orm/neon-serverless";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import { users, medications, userFavorites, type User, type InsertUser, type Medication, type InsertMedication, type UserFavorite, type InsertUserFavorite } from "@shared/schema";
 import { eq, and, ilike, or } from "drizzle-orm";
 
@@ -40,16 +41,27 @@ async function initializeDatabase() {
       throw new Error("DATABASE_URL not provided");
     }
     
-    console.log("Attempting to connect to database...");
-    db = drizzle(process.env.DATABASE_URL);
+    console.log("Attempting to connect to Supabase database...");
+    
+    // Configure postgres client for Supabase
+    const client = postgres(process.env.DATABASE_URL, {
+      ssl: 'require',
+      max: 1, // Single connection for transaction pooler
+      idle_timeout: 20,
+      connect_timeout: 10
+    });
+    
+    db = drizzle(client);
     
     // Test the connection
+    console.log("Testing database connection...");
     await db.select().from(users).limit(1);
-    console.log("✅ Database connection successful");
+    console.log("✅ Supabase database connection successful");
     dbInitialized = true;
     return db;
   } catch (error) {
     console.error("❌ Database connection failed:", error);
+    console.log("Check that your DATABASE_URL has the correct password and format");
     db = null;
     dbInitialized = true;
     return null;
