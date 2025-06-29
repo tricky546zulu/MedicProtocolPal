@@ -42,12 +42,14 @@ async function initializeDatabase() {
       console.log("Using DATABASE_URL for connection...");
       const connectionString = process.env.DATABASE_URL;
       
-      // Configure postgres client for Supabase
+      // Configure postgres client for Supabase with better error handling
       const client = postgres(connectionString, {
         ssl: 'require',
         max: 1, // Single connection for transaction pooler
         idle_timeout: 20,
-        connect_timeout: 10
+        connect_timeout: 30, // Increased timeout
+        onnotice: () => {}, // Suppress notices
+        debug: false
       });
       
       db = drizzle(client);

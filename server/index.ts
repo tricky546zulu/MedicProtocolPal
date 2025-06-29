@@ -2,11 +2,13 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
-// Set up DATABASE_URL for Supabase if not already set
-if (!process.env.DATABASE_URL && process.env.VITE_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+// Set up DATABASE_URL for Supabase - always reconstruct from components for reliability
+if (process.env.VITE_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
   const url = new URL(process.env.VITE_SUPABASE_URL);
   const host = url.hostname;
-  process.env.DATABASE_URL = `postgresql://postgres:${process.env.SUPABASE_SERVICE_ROLE_KEY}@${host}:5432/postgres`;
+  const constructedUrl = `postgresql://postgres:${process.env.SUPABASE_SERVICE_ROLE_KEY}@${host}:5432/postgres`;
+  process.env.DATABASE_URL = constructedUrl;
+  console.log(`🔧 Constructed DATABASE_URL for Supabase host: ${host}`);
 }
 
 const app = express();
