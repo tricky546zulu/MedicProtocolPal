@@ -15,16 +15,16 @@ export default function Dashboard() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editMedication, setEditMedication] = useState<Medication | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [alertLevel, setAlertLevel] = useState<string>("");
-  const [category, setCategory] = useState<string>("");
+  const [alertLevel, setAlertLevel] = useState<string>("all");
+  const [category, setCategory] = useState<string>("all");
 
   const { data: medications = [], isLoading } = useQuery({
     queryKey: ['/api/medications', { search: searchTerm, alertLevel, category }],
     queryFn: async () => {
       const params = new URLSearchParams();
       if (searchTerm) params.append('search', searchTerm);
-      if (alertLevel) params.append('alertLevel', alertLevel);
-      if (category) params.append('category', category);
+      if (alertLevel && alertLevel !== 'all') params.append('alertLevel', alertLevel);
+      if (category && category !== 'all') params.append('category', category);
       
       const response = await fetch(`/api/medications?${params}`);
       if (!response.ok) throw new Error('Failed to fetch medications');
@@ -95,7 +95,7 @@ export default function Dashboard() {
                       <SelectValue placeholder="All Alert Levels" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Alert Levels</SelectItem>
+                      <SelectItem value="all">All Alert Levels</SelectItem>
                       <SelectItem value="HIGH_ALERT">HIGH ALERT</SelectItem>
                       <SelectItem value="ELDER_ALERT">ELDER ALERT</SelectItem>
                       <SelectItem value="STANDARD">Standard</SelectItem>
@@ -106,7 +106,7 @@ export default function Dashboard() {
                       <SelectValue placeholder="All Categories" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Categories</SelectItem>
+                      <SelectItem value="all">All Categories</SelectItem>
                       <SelectItem value="analgesics">Analgesics</SelectItem>
                       <SelectItem value="cardiac">Cardiac</SelectItem>
                       <SelectItem value="respiratory">Respiratory</SelectItem>
