@@ -29,17 +29,45 @@ export interface IStorage {
 }
 
 // Database instance
-let db: ReturnType<typeof drizzle>;
-try {
-  db = drizzle(process.env.DATABASE_URL!);
-} catch (error) {
-  console.error("Database connection failed:", error);
-  // Will fall back to in-memory storage for now
+let db: ReturnType<typeof drizzle> | null = null;
+let dbInitialized = false;
+
+async function initializeDatabase() {
+  if (dbInitialized) return db;
+  
+  try {
+    if (!process.env.DATABASE_URL) {
+      throw new Error("DATABASE_URL not provided");
+    }
+    
+    console.log("Attempting to connect to database...");
+    db = drizzle(process.env.DATABASE_URL);
+    
+    // Test the connection
+    await db.select().from(users).limit(1);
+    console.log("✅ Database connection successful");
+    dbInitialized = true;
+    return db;
+  } catch (error) {
+    console.error("❌ Database connection failed:", error);
+    db = null;
+    dbInitialized = true;
+    return null;
+  }
 }
 
 export class PostgresStorage implements IStorage {
+  private async getDb() {
+    const database = await initializeDatabase();
+    if (!database) {
+      throw new Error("Database not available");
+    }
+    return database;
+  }
+
   async getUser(id: number): Promise<User | undefined> {
-    const result = await db.select().from(users).where(eq(users.id, id)).limit(1);
+    const database = await this.getDb();
+    const result = await database.select().from(users).where(eq(users.id, id)).limit(1);
     return result[0];
   }
 
@@ -423,19 +451,21 @@ let storage: IStorage;
 
 async function initializeStorage() {
   try {
-    if (process.env.DATABASE_URL && db) {
-      storage = new PostgresStorage();
-      console.log("Using PostgreSQL database");
-      return;
-    } else {
-      throw new Error("No database connection available");
+    if (process.env.DATABASE_URL) {
+      const dbConnection = await initializeDatabase();
+      if (dbConnection) {
+        storage = new PostgresStorage();
+        console.log("✅ Using PostgreSQL database");
+        return;
+      }
     }
+    throw new Error("No database connection available");
   } catch (error) {
-    console.warn("Falling back to in-memory storage:", error);
+    console.warn("⚠️ Falling back to in-memory storage:", error.message);
     const memStorage = new MemStorage();
     await memStorage.initializeSampleData();
     storage = memStorage;
-    console.log("Initialized in-memory storage with sample Saskatchewan EMS medication data");
+    console.log("✅ Initialized in-memory storage with sample Saskatchewan EMS medication data");
   }
 }
 
