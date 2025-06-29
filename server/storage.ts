@@ -37,21 +37,23 @@ async function initializeDatabase() {
   if (dbInitialized) return db;
   
   try {
-    if (!process.env.DATABASE_URL) {
-      throw new Error("DATABASE_URL not provided");
+    // Check if DATABASE_URL is already set (from server/index.ts)
+    if (process.env.DATABASE_URL) {
+      console.log("Using DATABASE_URL for connection...");
+      const connectionString = process.env.DATABASE_URL;
+      
+      // Configure postgres client for Supabase
+      const client = postgres(connectionString, {
+        ssl: 'require',
+        max: 1, // Single connection for transaction pooler
+        idle_timeout: 20,
+        connect_timeout: 10
+      });
+      
+      db = drizzle(client);
+    } else {
+      throw new Error("DATABASE_URL not available");
     }
-    
-    console.log("Attempting to connect to Supabase database...");
-    
-    // Configure postgres client for Supabase
-    const client = postgres(process.env.DATABASE_URL, {
-      ssl: 'require',
-      max: 1, // Single connection for transaction pooler
-      idle_timeout: 20,
-      connect_timeout: 10
-    });
-    
-    db = drizzle(client);
     
     // Test the connection
     console.log("Testing database connection...");
@@ -61,7 +63,7 @@ async function initializeDatabase() {
     return db;
   } catch (error) {
     console.error("❌ Database connection failed:", error);
-    console.log("Check that your DATABASE_URL has the correct password and format");
+    console.log("Check that your Supabase credentials are correct");
     db = null;
     dbInitialized = true;
     return null;
