@@ -288,6 +288,7 @@ export function AddMedicationModal({ isOpen, onClose, editMedication }: AddMedic
                             rows={3}
                             placeholder="Pediatric dosing instructions if applicable..."
                             {...field}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -304,7 +305,7 @@ export function AddMedicationModal({ isOpen, onClose, editMedication }: AddMedic
                       <FormItem>
                         <FormLabel>Route of Administration</FormLabel>
                         <FormControl>
-                          <Input placeholder="e.g., IV, IM, PO, Inhalation" {...field} />
+                          <Input placeholder="e.g., IV, IM, PO, Inhalation" {...field} value={field.value || ""} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -317,7 +318,7 @@ export function AddMedicationModal({ isOpen, onClose, editMedication }: AddMedic
                       <FormItem>
                         <FormLabel>Onset/Duration</FormLabel>
                         <FormControl>
-                          <Input placeholder="e.g., Onset: 1-3 min, Duration: 10-20 min" {...field} />
+                          <Input placeholder="e.g., Onset: 1-3 min, Duration: 10-20 min" {...field} value={field.value || ""} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -338,6 +339,7 @@ export function AddMedicationModal({ isOpen, onClose, editMedication }: AddMedic
                         rows={3}
                         placeholder="Special warnings, precautions, or elder care considerations..."
                         {...field}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -357,6 +359,7 @@ export function AddMedicationModal({ isOpen, onClose, editMedication }: AddMedic
                         rows={2}
                         placeholder="List common side effects..."
                         {...field}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />

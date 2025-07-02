@@ -20,7 +20,7 @@ export function MedicationCard({ medication, onEdit }: MedicationCardProps) {
   const queryClient = useQueryClient();
 
   // Check if medication is favorited
-  const { data: favoriteData } = useQuery({
+  const { data: favoriteData } = useQuery<{ isFavorite: boolean }>({
     queryKey: ['/api/favorites/check', { userId: user?.id, medicationId: medication.id }],
     enabled: !!user?.id,
   });

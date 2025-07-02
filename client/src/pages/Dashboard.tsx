@@ -7,7 +7,7 @@ import { AddMedicationModal } from "@/components/AddMedicationModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Loader2, X } from "lucide-react";
 import type { Medication } from "@shared/schema";
 
 export default function Dashboard() {
@@ -76,44 +76,66 @@ export default function Dashboard() {
               </div>
 
               {/* Search and Filters */}
-              <div className="mt-6 flex flex-col lg:flex-row gap-4">
-                <div className="flex-1">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                    <Input
-                      type="text"
-                      placeholder="Search medications, indications, or contraindications..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10"
-                    />
+              <div className="mt-6 p-4 border rounded-lg bg-gray-50">
+                <div className="flex flex-col lg:flex-row gap-4 items-end">
+                  <div className="flex-1">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                      <Input
+                        type="text"
+                        placeholder="Search medications, indications, or contraindications..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-10 pr-10"
+                      />
+                      {searchTerm && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setSearchTerm("")}
+                          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
                   </div>
-                </div>
-                <div className="flex gap-2">
-                  <Select value={alertLevel} onValueChange={setAlertLevel}>
-                    <SelectTrigger className="w-48">
-                      <SelectValue placeholder="All Alert Levels" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Alert Levels</SelectItem>
-                      <SelectItem value="HIGH_ALERT">HIGH ALERT</SelectItem>
-                      <SelectItem value="ELDER_ALERT">ELDER ALERT</SelectItem>
-                      <SelectItem value="STANDARD">Standard</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Select value={category} onValueChange={setCategory}>
-                    <SelectTrigger className="w-48">
-                      <SelectValue placeholder="All Categories" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Categories</SelectItem>
-                      <SelectItem value="analgesics">Analgesics</SelectItem>
-                      <SelectItem value="cardiac">Cardiac</SelectItem>
-                      <SelectItem value="respiratory">Respiratory</SelectItem>
-                      <SelectItem value="neurological">Neurological</SelectItem>
-                      <SelectItem value="endocrine">Endocrine</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="flex gap-2">
+                    <Select value={alertLevel} onValueChange={setAlertLevel}>
+                      <SelectTrigger className="w-48">
+                        <SelectValue placeholder="All Alert Levels" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Alert Levels</SelectItem>
+                        <SelectItem value="HIGH_ALERT">HIGH ALERT</SelectItem>
+                        <SelectItem value="ELDER_ALERT">ELDER ALERT</SelectItem>
+                        <SelectItem value="STANDARD">Standard</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select value={category} onValueChange={setCategory}>
+                      <SelectTrigger className="w-48">
+                        <SelectValue placeholder="All Categories" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Categories</SelectItem>
+                        <SelectItem value="analgesics">Analgesics</SelectItem>
+                        <SelectItem value="cardiac">Cardiac</SelectItem>
+                        <SelectItem value="respiratory">Respiratory</SelectItem>
+                        <SelectItem value="neurological">Neurological</SelectItem>
+                        <SelectItem value="endocrine">Endocrine</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setSearchTerm("");
+                        setAlertLevel("all");
+                        setCategory("all");
+                      }}
+                    >
+                      Clear Filters
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -122,7 +144,8 @@ export default function Dashboard() {
             <div className="flex-1 overflow-auto p-6">
               {isLoading ? (
                 <div className="flex items-center justify-center h-32">
-                  <div className="text-gray-500">Loading medications...</div>
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  <span className="ml-2 text-gray-500">Loading medications...</span>
                 </div>
               ) : medications.length === 0 ? (
                 <div className="text-center py-12">

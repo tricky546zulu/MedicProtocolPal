@@ -87,17 +87,19 @@ export class PostgresStorage implements IStorage {
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
-    const result = await db.select().from(users).where(eq(users.email, email)).limit(1);
+    const database = await this.getDb();
+    const result = await database.select().from(users).where(eq(users.email, email)).limit(1);
     return result[0];
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
+    const database = await this.getDb();
     const userData = {
       ...insertUser,
       licenseNumber: insertUser.licenseNumber ?? null,
       role: insertUser.role ?? "user"
     };
-    const result = await db.insert(users).values(userData).returning();
+    const result = await database.insert(users).values(userData).returning();
     return result[0];
   }
 
@@ -108,7 +110,8 @@ export class PostgresStorage implements IStorage {
     limit?: number;
     offset?: number;
   }): Promise<Medication[]> {
-    let query = db.select().from(medications);
+    const database = await this.getDb();
+    let query = database.select().from(medications);
     
     const conditions = [];
     
@@ -133,7 +136,7 @@ export class PostgresStorage implements IStorage {
     }
 
     if (conditions.length > 0) {
-      query = query.where(and(...conditions));
+      query = query.where(and(...conditions)) as typeof query;
     }
 
     // Apply pagination
@@ -144,11 +147,13 @@ export class PostgresStorage implements IStorage {
   }
 
   async getMedication(id: number): Promise<Medication | undefined> {
-    const result = await db.select().from(medications).where(eq(medications.id, id)).limit(1);
+    const database = await this.getDb();
+    const result = await database.select().from(medications).where(eq(medications.id, id)).limit(1);
     return result[0];
   }
 
   async createMedication(insertMedication: InsertMedication): Promise<Medication> {
+    const database = await this.getDb();
     const medicationData = {
       ...insertMedication,
       category: insertMedication.category ?? null,
@@ -159,11 +164,12 @@ export class PostgresStorage implements IStorage {
       sideEffects: insertMedication.sideEffects ?? null,
       createdBy: insertMedication.createdBy ?? null
     };
-    const result = await db.insert(medications).values(medicationData).returning();
+    const result = await database.insert(medications).values(medicationData).returning();
     return result[0];
   }
 
   async updateMedication(id: number, updates: Partial<InsertMedication>): Promise<Medication | undefined> {
+    const database = await this.getDb();
     const updateData = {
       ...updates,
       category: updates.category ?? null,
@@ -176,7 +182,7 @@ export class PostgresStorage implements IStorage {
       updatedAt: new Date()
     };
     
-    const result = await db.update(medications)
+    const result = await database.update(medications)
       .set(updateData)
       .where(eq(medications.id, id))
       .returning();
@@ -184,12 +190,14 @@ export class PostgresStorage implements IStorage {
   }
 
   async deleteMedication(id: number): Promise<boolean> {
-    const result = await db.delete(medications).where(eq(medications.id, id)).returning();
+    const database = await this.getDb();
+    const result = await database.delete(medications).where(eq(medications.id, id)).returning();
     return result.length > 0;
   }
 
   async getUserFavorites(userId: number): Promise<Medication[]> {
-    const result = await db
+    const database = await this.getDb();
+    const result = await database
       .select({
         id: medications.id,
         name: medications.name,
@@ -216,12 +224,14 @@ export class PostgresStorage implements IStorage {
   }
 
   async addFavorite(insertFavorite: InsertUserFavorite): Promise<UserFavorite> {
-    const result = await db.insert(userFavorites).values(insertFavorite).returning();
+    const database = await this.getDb();
+    const result = await database.insert(userFavorites).values(insertFavorite).returning();
     return result[0];
   }
 
   async removeFavorite(userId: number, medicationId: number): Promise<boolean> {
-    const result = await db.delete(userFavorites)
+    const database = await this.getDb();
+    const result = await database.delete(userFavorites)
       .where(and(
         eq(userFavorites.userId, userId),
         eq(userFavorites.medicationId, medicationId)
@@ -231,7 +241,8 @@ export class PostgresStorage implements IStorage {
   }
 
   async isFavorite(userId: number, medicationId: number): Promise<boolean> {
-    const result = await db.select()
+    const database = await this.getDb();
+    const result = await database.select()
       .from(userFavorites)
       .where(and(
         eq(userFavorites.userId, userId),
@@ -475,7 +486,7 @@ async function initializeStorage() {
       }
     }
     throw new Error("No database connection available");
-  } catch (error) {
+  } catch (error: any) {
     console.warn("⚠️ Falling back to in-memory storage:", error.message);
     const memStorage = new MemStorage();
     await memStorage.initializeSampleData();
